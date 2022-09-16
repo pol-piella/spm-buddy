@@ -1,30 +1,6 @@
 import Foundation
 import XCTest
-
-class PackageListProvider {
-    private let fileManager: FileManager
-    
-    init(fileManager: FileManager = FileManager.default) {
-        self.fileManager = fileManager
-    }
-    
-    func scan(directory: URL) -> [URL] {
-        var files = [URL]()
-        
-        if let enumerator = fileManager.enumerator(at: directory, includingPropertiesForKeys: [.isRegularFileKey], options: [.skipsHiddenFiles, .skipsPackageDescendants]) {
-            for case let fileURL as URL in enumerator {
-                do {
-                    let fileAttributes = try fileURL.resourceValues(forKeys:[.isRegularFileKey])
-                    if fileAttributes.isRegularFile! && fileURL.path.hasSuffix("Package.swift") {
-                        files.append(fileURL.resolvingSymlinksInPath())
-                    }
-                } catch { print(error, fileURL) }
-            }
-        }
-
-        return files
-    }
-}
+import SPMBuddyCore
 
 class PackageListProviderTests: XCTestCase {
     func testWhenProviderIsCreatedThenAFileManagerIsProvided() {
@@ -35,7 +11,7 @@ class PackageListProviderTests: XCTestCase {
     func testWhenScanIsInvokedThenADirectoryPathCanBeProvided() {
         let provider = PackageListProvider()
         
-        provider.scan(directory: URL(string: "https://aURL.com")!)
+        _ = provider.scan(directory: URL(string: "https://aURL.com")!)
     }
     
     func test_WhenScanIsInvokedWithADirectoryPath_ThenAListOfAllSwiftPackageFilesAreReturned() throws {
@@ -56,5 +32,3 @@ class PackageListProviderTests: XCTestCase {
         XCTAssertEqual(packageFiles, [packageSwiftURL])
     }
 }
-// file:///private/var/folders/5w/n55lt3mj7_lghr_2hrckk4fw0000gn/T/directoryWithPackages/Package.swift
-// file:///var/folders/5w/n55lt3mj7_lghr_2hrckk4fw0000gn/T/directoryWithPackages/Package.swift
