@@ -14,6 +14,12 @@ let package = Package(
                 .product(name: "ArgumentParser", package: "swift-argument-parser")
             ]
         ),
-        .target(name: "SPMBuddyCore")
+        .target(
+            name: "SPMBuddyCore"
+        ),
+        .testTarget(
+            name: "SPMBuddyCoreTests",
+            dependencies: ["SPMBuddyCore"]
+        )
     ]
 )
