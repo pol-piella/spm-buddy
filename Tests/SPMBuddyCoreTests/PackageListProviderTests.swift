@@ -11,6 +11,7 @@ class PackageListProvider {
 
 class PackageListProviderTests: XCTestCase {
     func testWhenProviderIsCreatedThenAFileManagerIsProvided() {
-        let provider = PackageListProvider(fileManager: FileManager.default)
+        _ = PackageListProvider(fileManager: FileManager.default)
+        _ = PackageListProvider()
     }
 }
