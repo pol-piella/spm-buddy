@@ -2,14 +2,6 @@ import XCTest
 import Foundation
 import SPMBuddyCore
 
-struct PackageFileRewriter {
-    func execute(on file: URL, changing: [RewriteOption]) throws {
-        let fileContents = try! String(contentsOf: file, encoding: .utf8)
-        
-        try changing.forEach { try $0.executor(fileContents).write(to: file, atomically: true, encoding: .utf8) }
-    }
-}
-
 class PackageFileRewriterTests: XCTestCase {
     func test_GivenPackageFileRewriterIsInitialised_WhenPackageFileIsPassedIn_ThenToolsVersionCanBeUpdated() throws {
         let packageFile = try createDummyPackageFile(withVersion: "5.6")
