@@ -12,6 +12,15 @@ class PackageFileRewriterTests: XCTestCase {
         XCTAssertTrue(try String(contentsOf: packageFile, encoding: .utf8).contains("// swift-tools-version: 5.7"))
     }
     
+    func test_GivenPackageFileRewriterIsInitialised_WhenPackageFileIsPassedIn_ThenToolsVersionCanBeDowngraded() throws {
+        let packageFile = try createDummyPackageFile(withVersion: "5.6")
+        let rewriter = PackageFileRewriter()
+        
+        try rewriter.execute(on: packageFile, changing: [.toolsVersion(to: "5.3")])
+        
+        XCTAssertTrue(try String(contentsOf: packageFile, encoding: .utf8).contains("// swift-tools-version: 5.3"))
+    }
+
     private func createDummyPackageFile(withVersion version: String) throws -> URL {
         let fileURL = FileManager.default.temporaryDirectory.appendingPathComponent("\(#function)-Package.swift")
         try """
