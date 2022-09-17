@@ -1,24 +1,25 @@
 import XCTest
 import Foundation
 
-enum RewriteOption {
-    case toolsVersion(to: String)
+struct RewriteOption {
+    let executor: (String) -> String
+}
+
+extension RewriteOption {
+    static func toolsVersion(to version: String) -> RewriteOption {
+        return .init { contents in
+            let rePattern = #"(swift-tools-version:\s?)[0-9.]*"#
+            
+            return contents.replacingOccurrences(of: rePattern, with: "$1\(version)", options: .regularExpression)
+        }
+    }
 }
 
 struct PackageFileRewriter {
     func execute(on file: URL, changing: [RewriteOption]) throws {
         let fileContents = try! String(contentsOf: file, encoding: .utf8)
-        let rePattern = #"(swift-tools-version:\s?)[0-9.]*"#
         
-        var modifiedContent: String = ""
-        for change in changing {
-            switch change {
-            case let .toolsVersion(toolsVersion):
-                modifiedContent = fileContents.replacingOccurrences(of: rePattern, with: "$1\(toolsVersion)", options: .regularExpression)
-            }
-        }
-        
-        try modifiedContent.write(to: file, atomically: true, encoding: .utf8)
+        try changing.forEach { try $0.executor(fileContents).write(to: file, atomically: true, encoding: .utf8) }
     }
 }
 
