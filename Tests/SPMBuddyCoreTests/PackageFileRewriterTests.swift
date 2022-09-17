@@ -2,7 +2,9 @@ import XCTest
 import Foundation
 
 struct PackageFileRewriter {
-    
+    func execute(on file: URL) {
+        
+    }
 }
 
 class PackageFileRewriterTests: XCTestCase {
@@ -10,7 +12,7 @@ class PackageFileRewriterTests: XCTestCase {
         let packageFile = try createDummyPackageFile()
         let rewriter = PackageFileRewriter()
         
-        
+        rewriter.execute(on: packageFile)
     }
     
     private func createDummyPackageFile() throws -> URL {
