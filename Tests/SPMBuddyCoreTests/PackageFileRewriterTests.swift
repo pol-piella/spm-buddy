@@ -13,16 +13,16 @@ struct PackageFileRewriter {
 
 class PackageFileRewriterTests: XCTestCase {
     func test_GivenPackageFileRewriterIsInitialised_WhenPackageFileIsPassedIn_ThenToolsVersionCanBeUpdated() throws {
-        let packageFile = try createDummyPackageFile()
+        let packageFile = try createDummyPackageFile(withVersion: "5.6")
         let rewriter = PackageFileRewriter()
         
         rewriter.execute(on: packageFile, changing: [.toolsVersion(to: "5.7")])
     }
     
-    private func createDummyPackageFile() throws -> URL {
+    private func createDummyPackageFile(withVersion version: String) throws -> URL {
         let fileURL = FileManager.default.temporaryDirectory.appendingPathComponent("\(#function)-Package.swift")
         try """
-        // swift-tools-version: 5.6
+        // swift-tools-version: \(version)
 
         import PackageDescription
 
