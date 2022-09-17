@@ -1,8 +1,12 @@
 import XCTest
 import Foundation
 
+enum RewriteOption {
+    case toolsVersion(to: String)
+}
+
 struct PackageFileRewriter {
-    func execute(on file: URL) {
+    func execute(on file: URL, changing: [RewriteOption]) {
         
     }
 }
@@ -12,7 +16,7 @@ class PackageFileRewriterTests: XCTestCase {
         let packageFile = try createDummyPackageFile()
         let rewriter = PackageFileRewriter()
         
-        rewriter.execute(on: packageFile)
+        rewriter.execute(on: packageFile, changing: [.toolsVersion(to: "5.7")])
     }
     
     private func createDummyPackageFile() throws -> URL {
