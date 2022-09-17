@@ -6,8 +6,19 @@ enum RewriteOption {
 }
 
 struct PackageFileRewriter {
-    func execute(on file: URL, changing: [RewriteOption]) {
+    func execute(on file: URL, changing: [RewriteOption]) throws {
+        let fileContents = try! String(contentsOf: file, encoding: .utf8)
+        let rePattern = #"(swift-tools-version:\s?)[0-9.]*"#
         
+        var modifiedContent: String = ""
+        for change in changing {
+            switch change {
+            case let .toolsVersion(toolsVersion):
+                modifiedContent = fileContents.replacingOccurrences(of: rePattern, with: "$1\(toolsVersion)", options: .regularExpression)
+            }
+        }
+        
+        try modifiedContent.write(to: file, atomically: true, encoding: .utf8)
     }
 }
 
@@ -16,7 +27,9 @@ class PackageFileRewriterTests: XCTestCase {
         let packageFile = try createDummyPackageFile(withVersion: "5.6")
         let rewriter = PackageFileRewriter()
         
-        rewriter.execute(on: packageFile, changing: [.toolsVersion(to: "5.7")])
+        try rewriter.execute(on: packageFile, changing: [.toolsVersion(to: "5.7")])
+        
+        XCTAssertTrue(try String(contentsOf: packageFile, encoding: .utf8).contains("// swift-tools-version: 5.7"))
     }
     
     private func createDummyPackageFile(withVersion version: String) throws -> URL {
