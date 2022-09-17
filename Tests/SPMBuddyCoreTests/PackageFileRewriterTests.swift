@@ -1,19 +1,6 @@
 import XCTest
 import Foundation
-
-struct RewriteOption {
-    let executor: (String) -> String
-}
-
-extension RewriteOption {
-    static func toolsVersion(to version: String) -> RewriteOption {
-        return .init { contents in
-            let rePattern = #"(swift-tools-version:\s?)[0-9.]*"#
-            
-            return contents.replacingOccurrences(of: rePattern, with: "$1\(version)", options: .regularExpression)
-        }
-    }
-}
+import SPMBuddyCore
 
 struct PackageFileRewriter {
     func execute(on file: URL, changing: [RewriteOption]) throws {
